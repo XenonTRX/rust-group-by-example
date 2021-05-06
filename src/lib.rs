@@ -70,6 +70,8 @@ impl<I: Iterator + Clone> IteratorExt for I {}
 
 #[cfg(test)]
 mod tests {
+    use std::collections::LinkedList;
+
     use super::*;
     #[test]
     fn map_and_filter_test() {
@@ -110,6 +112,64 @@ mod tests {
                 vec![&0, &2, &3],
                 vec![&2],
                 vec![&1, &2, &3]
+            ]
+        );
+    }
+
+    #[test]
+    fn group_iterator_test_linked_list() {
+        // let a = vec![1, 2, 3, 4, 0, 2, 3, 2, 1, 2, 3];
+        let mut a: LinkedList<i32> = LinkedList::new();
+        a.push_back(1);
+        a.push_back(2);
+        a.push_back(3);
+        a.push_back(4);
+        a.push_back(0);
+        a.push_back(2);
+        a.push_back(3);
+        a.push_back(2);
+        a.push_back(1);
+        a.push_back(2);
+        a.push_back(3);
+
+        let b = a.iter();
+
+        let c = GroupIterator::new(b, |x, y| x <= y);
+
+        let d = c.map(|x| x.collect::<Vec<_>>()).collect::<Vec<_>>();
+
+        assert_eq!(
+            d,
+            vec![
+                vec![&1, &2, &3, &4],
+                vec![&0, &2, &3],
+                vec![&2],
+                vec![&1, &2, &3]
+            ]
+        );
+    }
+
+    #[test]
+    fn group_iterator_test_reversed() {
+        let a = vec![1, 2, 3, 4, 0, 2, 3, 2, 1, 2, 3];
+
+        let b = a.iter().rev();
+
+        let c = GroupIterator::new(b, |x, y| x <= y);
+
+        let d = c.map(|x| x.collect::<Vec<_>>()).collect::<Vec<_>>();
+
+        assert_eq!(
+            d,
+            vec![
+                vec![&3],
+                vec![&2],
+                vec![&1, &2, &3],
+                vec![&2],
+                vec![&0, &4],
+                vec![&3],
+                vec![&2],
+                vec![&1],
             ]
         );
     }
