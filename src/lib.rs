@@ -99,7 +99,7 @@ mod tests {
 
         let b = a.iter();
 
-        let c = GroupIterator::new(b, |x, y| x < y);
+        let c = GroupIterator::new(b, |x, y| x <= y);
 
         let d = c.map(|x| x.collect::<Vec<_>>()).collect::<Vec<_>>();
 
@@ -120,7 +120,7 @@ mod tests {
 
         let b = a
             .iter()
-            .group_adjacent(|x, y| x < y)
+            .group_adjacent(|x, y| x <= y)
             .map(|x| x.collect::<Vec<_>>())
             .collect::<Vec<_>>();
 
@@ -136,6 +136,27 @@ mod tests {
     }
 
     #[test]
+    fn group_iterator_test_3() {
+        let a = vec![1, 2, 2, 3, 1, 2, 0, 4, 5, 2];
+
+        let b = a
+            .iter()
+            .group_adjacent(|x, y| x <= y)
+            .map(|x| x.collect::<Vec<_>>())
+            .collect::<Vec<_>>();
+
+        assert_eq!(
+            b,
+            vec![
+                vec![&1, &2, &2, &3],
+                vec![&1, &2],
+                vec![&0, &4, &5],
+                vec![&2]
+            ]
+        );
+    }
+
+    #[test]
     fn t() {
         let a = vec![1, 2, 3];
 
@@ -143,7 +164,7 @@ mod tests {
             .iter()
             .cycle()
             .take(6)
-            .group_adjacent(|x, y| x < y)
+            .group_adjacent(|x, y| x <= y)
             .map(|x| x.collect::<Vec<_>>())
             .collect::<Vec<_>>();
 
